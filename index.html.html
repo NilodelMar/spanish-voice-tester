@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f5f1fb">
+  <title>Spanish Voice Tester</title>
+  <style>
+    :root{color-scheme:light;--ink:#252333;--muted:#716d80;--line:#e8e2ef;--lav:#eee8f7;--lav-strong:#6e58a3;--mint:#eaf4ef;--rose:#fbf0f2;--paper:#fff;--shadow:0 12px 32px #3024460d}
+    *{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#f7f4fa 0,#fbfafc 330px,#fbfafc 100%);color:var(--ink);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}
+    main{width:min(100%,620px);margin:0 auto;padding:24px 18px calc(34px + env(safe-area-inset-bottom))}
+    .eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--lav-strong);font-weight:750}
+    h1{font-size:30px;line-height:1.12;letter-spacing:-.035em;margin:8px 0 10px} .intro{color:var(--muted);margin:0 0 20px}
+    .card{background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:18px;margin:14px 0;box-shadow:var(--shadow)}
+    .section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}h2{font-size:17px;margin:0;letter-spacing:-.015em}
+    .hint{font-size:13px;color:var(--muted);margin:4px 0 12px}
+    textarea{display:block;width:100%;min-height:104px;resize:vertical;border:1px solid var(--line);border-radius:15px;padding:13px 14px;font:inherit;color:var(--ink);background:#fdfcfe;outline:none}textarea:focus{border-color:#ab99cf;box-shadow:0 0 0 3px #6e58a31a}
+    .controls{display:flex;align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap}.speed-label{font-size:13px;color:var(--muted);margin-right:2px}
+    button{font:inherit;cursor:pointer;touch-action:manipulation}.btn{min-height:44px;padding:0 15px;border-radius:13px;border:1px solid var(--line);background:#fff;color:var(--ink);font-weight:650}
+    .btn:active{transform:translateY(1px)}.btn.primary{background:var(--lav-strong);color:#fff;border-color:var(--lav-strong)}.btn.stop{background:var(--rose);border-color:#f2d9df;color:#8b4251}.btn.small{min-height:38px;padding:0 12px;font-size:14px}
+    .segmented{display:inline-flex;padding:3px;background:#f3f0f6;border-radius:12px}.segmented button{border:0;background:transparent;color:var(--muted);min-height:36px;padding:0 11px;border-radius:9px;font-weight:650}.segmented button[aria-pressed="true"]{background:white;color:var(--ink);box-shadow:0 1px 4px #30244612}
+    .status{border-radius:14px;padding:11px 13px;margin-top:13px;font-size:13px;background:#f6f4f8;color:var(--muted);display:flex;gap:9px;align-items:flex-start}.status::before{content:"";width:8px;height:8px;flex:none;border-radius:50%;background:#aaa3b4;margin-top:5px}.status.good{background:#eef6f1;color:#365e49}.status.good::before{background:#54a575}.status.warn{background:#fbf5e8;color:#735922}.status.warn::before{background:#d2a53e}.status.error{background:#fbefef;color:#83434a}.status.error::before{background:#ce6b75}
+    .voice-list{display:grid;gap:9px}.voice{border:1px solid var(--line);border-radius:16px;padding:13px;background:#fff}.voice-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.voice-name{font-weight:700;line-height:1.3;overflow-wrap:anywhere}.voice-meta{font-size:12px;color:var(--muted);margin-top:5px;display:flex;flex-wrap:wrap;gap:6px 10px}.badge{padding:2px 7px;background:#f4f1f7;border-radius:20px}.voice-actions{display:flex;gap:8px;margin-top:11px}.voice-actions .btn{flex:1}
+    .empty{padding:18px 14px;border:1px dashed #d8d1e2;border-radius:16px;color:var(--muted);font-size:14px;background:#fcfbfd}.note{font-size:12px;color:var(--muted);margin:12px 2px 0}.deploy{background:var(--mint);border-color:#d9e9df}.deploy ol{padding-left:20px;margin:10px 0 0}.deploy li{padding:3px 0}.footer{font-size:12px;color:var(--muted);text-align:center;padding:12px}
+    @media(min-width:500px){main{padding-top:40px}.card{padding:21px}}
+  </style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">A small browser voice check</div>
+  <h1>Spanish Voice Tester</h1>
+  <p class="intro">試聽這台裝置目前提供的西班牙西語聲音。聲音特徵請以實際聽感判斷。</p>
+
+  <section class="card" aria-labelledby="sample-title">
+    <div class="section-head"><h2 id="sample-title">試音句子</h2></div>
+    <textarea id="phrase" lang="es-ES" aria-label="西班牙語試音句子" autocapitalize="sentences">Contéstame, Nilo. Enséñame lo atrevido que eres.</textarea>
+    <div class="controls">
+      <span class="speed-label">速度</span>
+      <div class="segmented" role="group" aria-label="播放速度">
+        <button type="button" data-rate="1" aria-pressed="true">1.0×</button>
+        <button type="button" data-rate="0.75" aria-pressed="false">0.75×</button>
+      </div>
+      <button class="btn stop" id="stopBtn" type="button">停止</button>
+    </div>
+    <div class="status" id="status" role="status" aria-live="polite">正在讀取裝置的語音清單…</div>
+  </section>
+
+  <section class="card" aria-labelledby="voices-title">
+    <div class="section-head"><h2 id="voices-title">可用的 es-ES 語音</h2><button class="btn small" id="refreshBtn" type="button">重新整理</button></div>
+    <p class="hint">每個語音都會以你上方輸入的句子試聽。語音名稱不代表聲線性別。</p>
+    <div id="voiceList" class="voice-list" aria-live="polite"></div>
+    <p class="note">「裝置內建」資訊依瀏覽器回報的 localService 欄位顯示；欄位未提供時會標示未知。</p>
+  </section>
+
+  <section class="card deploy" aria-labelledby="deploy-title">
+    <h2 id="deploy-title">在 iPhone Safari 開啟</h2>
+    <ol>
+      <li>把這個 HTML 檔放進一個靜態網站託管服務（例如 GitHub Pages）。</li>
+      <li>部署後用 iPhone Safari 開啟該網址，再點語音的「試聽」。</li>
+      <li>iOS Safari 只會列出它實際回報給網頁的語音；設定中新增的語音不一定會出現在清單。按「重新整理」後若仍沒有 es-ES，代表 Safari 目前沒有提供這種語音。</li>
+    </ol>
+    <p class="note">直接在電腦預覽無法確認 iPhone 實際提供哪些聲音。瀏覽器只會列出它回報的語音；若 iOS Safari 沒有提供 es-ES，本頁不會改用其他語言冒充。</p>
+  </section>
+  <div class="footer">只使用瀏覽器內建 Web Speech API · 不需帳號或額外服務</div>
+</main>
+<script>
+(() => {
+  const phrase = document.getElementById('phrase');
+  const list = document.getElementById('voiceList');
+  const status = document.getElementById('status');
+  const synth = window.speechSynthesis;
+  let voices = [];
+  let rate = 1;
+  let activeButton = null;
+
+  function setStatus(message, kind = '') {
+    status.className = `status${kind ? ` ${kind}` : ''}`;
+    status.textContent = message;
+  }
+  function esEsVoices() {
+    return synth ? synth.getVoices().filter(v => String(v.lang || '').toLowerCase() === 'es-es') : [];
+  }
+  function refreshVoices() {
+    if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') {
+      voices = [];
+      list.innerHTML = '<div class="empty">這個瀏覽器不支援 Web Speech API 的語音播放功能。</div>';
+      setStatus('無法使用：目前瀏覽器沒有 speechSynthesis。請改用支援此 API 的瀏覽器。', 'error');
+      return;
+    }
+    voices = esEsVoices();
+    renderVoices();
+    if (voices.length) {
+      setStatus(`找到 ${voices.length} 種 es-ES 語音。點選任一語音的試聽按鈕。`, 'good');
+    } else {
+      setStatus('目前沒有取得任何 es-ES 語音。iOS Safari 只能使用系統／瀏覽器提供的語音；本頁不會以其他語言代替。iOS 設定中新增的語音不一定會出現在 Safari 清單；重新整理後若仍沒有 es-ES，這台裝置的 Safari 目前無法提供它。', 'warn');
+    }
+  }
+  function renderVoices() {
+    list.replaceChildren();
+    if (!voices.length) {
+      list.innerHTML = '<div class="empty">語音清單目前沒有 es-ES 項目。iOS Safari 可能不會列出設定中新增的語音。</div>';
+      return;
+    }
+    voices.forEach((voice, index) => {
+      const item = document.createElement('article');
+      item.className = 'voice';
+      const top = document.createElement('div');
+      top.className = 'voice-top';
+      const name = document.createElement('div');
+      name.className = 'voice-name';
+      name.textContent = voice.name || '（未命名語音）';
+      const meta = document.createElement('div');
+      meta.className = 'voice-meta';
+      const lang = document.createElement('span'); lang.className = 'badge'; lang.textContent = voice.lang || '語言代碼未提供';
+      const local = document.createElement('span'); local.className = 'badge';
+      local.textContent = `localService：${typeof voice.localService === 'boolean' ? (voice.localService ? 'true' : 'false') : '未知'}`;
+      meta.append(lang, local);
+      top.append(name);
+      const actions = document.createElement('div'); actions.className = 'voice-actions';
+      const play = document.createElement('button'); play.className = 'btn primary'; play.type = 'button'; play.textContent = '試聽';
+      play.addEventListener('click', () => speak(voice, play));
+      actions.append(play);
+      item.append(top, meta, actions);
+      list.append(item);
+    });
+  }
+  function speak(voice, button) {
+    const text = phrase.value.trim();
+    if (!text) { setStatus('請先輸入一段西班牙語句子。', 'warn'); phrase.focus(); return; }
+    if (!voices.some(v => v === voice)) { setStatus('這個語音已不在目前清單中，請重新整理後再試。', 'warn'); return; }
+    synth.cancel();
+    if (activeButton) activeButton.textContent = '試聽';
+    activeButton = button;
+    button.textContent = '準備播放…';
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.voice = voice;
+    utterance.lang = voice.lang || 'es-ES';
+    utterance.rate = rate;
+    let started = false;
+    utterance.onstart = () => { started = true; button.textContent = '播放中…'; setStatus(`正在播放「${voice.name || '未命名語音'}」。`, 'good'); };
+    utterance.onend = () => { button.textContent = '試聽'; if (activeButton === button) activeButton = null; setStatus('播放完成。', 'good'); };
+    utterance.onerror = event => {
+      button.textContent = '試聽'; if (activeButton === button) activeButton = null;
+      const detail = event.error ? `（${event.error}）` : '';
+      setStatus(`瀏覽器回報播放失敗${detail}。請確認 iPhone 靜音／音量設定，或試試另一種語音。`, 'error');
+    };
+    try {
+      synth.speak(utterance);
+      // Safari may not fire a start event if speech is blocked or unavailable.
+      window.setTimeout(() => {
+        if (!started && activeButton === button) {
+          button.textContent = '試聽'; activeButton = null;
+          setStatus('瀏覽器沒有確認語音已開始播放。可能是 iOS 語音尚未就緒或播放被系統阻擋；請重新整理語音清單後再試。', 'error');
+        }
+      }, 3500);
+    } catch (error) {
+      button.textContent = '試聽'; if (activeButton === button) activeButton = null;
+      setStatus('瀏覽器無法啟動這個語音。請重新整理清單或選擇其他語音。', 'error');
+    }
+  }
+  document.querySelectorAll('[data-rate]').forEach(button => button.addEventListener('click', () => {
+    rate = Number(button.dataset.rate);
+    document.querySelectorAll('[data-rate]').forEach(b => b.setAttribute('aria-pressed', String(b === button)));
+  }));
+  document.getElementById('stopBtn').addEventListener('click', () => {
+    if (synth) synth.cancel();
+    if (activeButton) activeButton.textContent = '試聽';
+    activeButton = null;
+    setStatus('已停止播放。');
+  });
+  document.getElementById('refreshBtn').addEventListener('click', () => {
+    if (synth) { synth.cancel(); refreshVoices(); }
+  });
+  if (synth) synth.addEventListener('voiceschanged', refreshVoices);
+  refreshVoices();
+  // Some browsers populate the list only after the page has settled.
+  window.setTimeout(() => { if (synth && !voices.length) refreshVoices(); }, 800);
+})();
+</script>
+</body>
+</html>
